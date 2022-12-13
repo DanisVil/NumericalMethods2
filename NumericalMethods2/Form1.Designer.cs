@@ -44,7 +44,7 @@ namespace NumericalMethods2
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(1738, 385);
+            this.textBox1.Location = new System.Drawing.Point(1538, 385);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
             this.textBox1.TabIndex = 1;
@@ -52,7 +52,7 @@ namespace NumericalMethods2
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1738, 325);
+            this.label1.Location = new System.Drawing.Point(1538, 325);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 15);
             this.label1.TabIndex = 2;
@@ -60,7 +60,7 @@ namespace NumericalMethods2
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1738, 453);
+            this.button1.Location = new System.Drawing.Point(1538, 453);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;

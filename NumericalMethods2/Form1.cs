@@ -12,8 +12,11 @@ namespace NumericalMethods2
     public partial class Form1 : Form
     {
         private double a = 0.4, b = 4, eps = 0.000001;
-        private int numOfPoints = 3;
-        private int coeff = 2;
+        private int numNodes = 7;
+        private int numOfPoints = 13;
+        private List<List<double>> points;
+        private List<double> diffs = new List<double>();
+        private ObservablePoint[] newton;
         public Form1()
         {
             InitializeComponent();
@@ -21,50 +24,50 @@ namespace NumericalMethods2
         }
         private void Process()
         {
-            label1.Text = numOfPoints.ToString();
-            double a = 0.4, b = 4, eps = 0.000001;
-            List<List<double>> points = Tabulate(a, b, numOfPoints, eps);
+            points = Tabulate(a, b, numNodes, eps);
+            for (int i = 0; i < numNodes - 1; i++)
+            {
+                diffs.Add(DividedDiffs(points.GetRange(0, i + 2)));
+            }
+
+            newton = new ObservablePoint[numOfPoints];
+            for (int i = 0; i < numOfPoints; i++)
+            {
+                double step = (b - a) / numOfPoints;
+                double x = a + i * step;
+                newton[i] = new ObservablePoint(x, Newton(x, diffs, points));
+            }
+            label1.Text = numNodes.ToString();
 
             var taylor = new ObservablePoint[numOfPoints];
             for (int i = 0; i < numOfPoints; i++)
             {
-                taylor[i] = new ObservablePoint(points[i][0], points[i][1]);
+                double step = (b - a) / numOfPoints;
+                double x = a + i * step;
+                taylor[i] = new ObservablePoint(x, Taylor(x));
             }
 
-            var lagrange = new ObservablePoint[coeff * numOfPoints];
-            for (int i = 0; i <= coeff * (numOfPoints - 1); i++)
+            var lagrange = new ObservablePoint[numOfPoints];
+            for (int i = 0; i < numOfPoints; i++)
             {
-                double step = (b - a) / coeff / (numOfPoints - 1);
+                double step = (b - a) / numOfPoints;
                 double x = a + i * step;
                 lagrange[i] = new ObservablePoint(x, Lagrange(x, points));
             }
 
-            List<double> diffs = new List<double>();
-            for (int i = 0; i < numOfPoints - 1; i++)
+            var erf = new ObservablePoint[numOfPoints];
+            for (int i = 0; i < numOfPoints; i++)
             {
-                diffs.Add(DividedDiffs(points.GetRange(0, i + 2)));
-            }
-            var newton = new ObservablePoint[coeff * numOfPoints];
-            for (int i = 0; i <= coeff * (numOfPoints - 1); i++)
-            {
-                double step = (b - a) / coeff / (numOfPoints - 1);
-                double x = a + i * step;
-                newton[i] = new ObservablePoint(x, Newton(x, diffs, points));
-            }
-
-            var erf = new ObservablePoint[coeff * numOfPoints];
-            for (int i = 0; i <= coeff * (numOfPoints - 1); i++)
-            {
-                double step = (b - a) / coeff / (numOfPoints - 1);
+                double step = (b - a) / numOfPoints;
                 double x = a + i * step;
                 erf[i] = new ObservablePoint(x, Erf(Lagrange(x, points)));
             }
 
-            var error = new ObservablePoint[coeff * numOfPoints];
+            var error = new ObservablePoint[numOfPoints];
             double maxError = 0;
-            for (int i = 0; i <= coeff * (numOfPoints - 1); i++)
+            for (int i = 0; i < numOfPoints; i++)
             {
-                double step = (b - a) / coeff / (numOfPoints - 1), x = a + i * step;
+                double step = (b - a) / numOfPoints, x = a + i * step;
                 double err = Math.Abs(Taylor(x, eps) - Lagrange(x, points));
                 error[i] = new ObservablePoint(x, err);
                 if (err > maxError) maxError = err;
@@ -74,20 +77,20 @@ namespace NumericalMethods2
             cartesianChart1.ZoomMode = LiveChartsCore.Measure.ZoomAndPanMode.X;
             cartesianChart1.Series = new ISeries[]
             {
-                //new LineSeries<ObservablePoint>
-                //{
-                //    Name = "Ci(x)",
-                //    Values = taylor,
-                //    LineSmoothness = 0,
-                //    GeometrySize = 3
-                //},
+                new LineSeries<ObservablePoint>
+                {
+                    Name = "Ci(x)",
+                    Values = taylor,
+                    LineSmoothness = 0,
+                    GeometrySize = 3
+                },
                 new LineSeries<ObservablePoint>
                 {
                     Name = "L_n(x)",
                     Values = lagrange,
                     LineSmoothness = 0,
                     GeometrySize = 3
-                },
+                }
                 //new LineSeries<ObservablePoint>
                 //{
                 //    Name = "Error",
@@ -95,13 +98,13 @@ namespace NumericalMethods2
                 //    LineSmoothness = 0,
                 //    GeometrySize = 3
                 //}
-                new LineSeries<ObservablePoint>
-                {
-                    Name = "Newton",
-                    Values = newton,
-                    LineSmoothness = 0,
-                    GeometrySize = 3
-                }
+                //new LineSeries<ObservablePoint>
+                //{
+                //    Name = "Newton",
+                //    Values = newton,
+                //    LineSmoothness = 0,
+                //    GeometrySize = 3
+                //}
                 //new LineSeries<ObservablePoint>
                 //{
                 //    Name = "Erf",
@@ -207,7 +210,7 @@ namespace NumericalMethods2
         {
             double sum = points[0][1];
             double prod = 1;
-            for (int i = 0; i < diffs.Count; i++)
+            for (int i = 0; i < points.Count - 1; i++)
             {
                 prod *= x - points[i][0];
                 sum += prod * diffs[i];
@@ -217,7 +220,7 @@ namespace NumericalMethods2
 
         private void button1_Click(object sender, EventArgs e)
         {
-            numOfPoints++;
+            numNodes++;
             Process();
         }
     }
