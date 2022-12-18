@@ -29,54 +29,31 @@ namespace NumericalMethods2
         /// </summary>
         private void InitializeComponent()
         {
-            this.cartesianChart1 = new LiveChartsCore.SkiaSharpView.WinForms.CartesianChart();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.nbox = new System.Windows.Forms.TextBox();
+            this.resbox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
-            // cartesianChart1
+            // nbox
             // 
-            this.cartesianChart1.Location = new System.Drawing.Point(12, 12);
-            this.cartesianChart1.Name = "cartesianChart1";
-            this.cartesianChart1.Size = new System.Drawing.Size(1626, 721);
-            this.cartesianChart1.TabIndex = 0;
+            this.nbox.Location = new System.Drawing.Point(370, 140);
+            this.nbox.Name = "nbox";
+            this.nbox.Size = new System.Drawing.Size(277, 23);
+            this.nbox.TabIndex = 0;
             // 
-            // textBox1
+            // resbox
             // 
-            this.textBox1.Location = new System.Drawing.Point(1538, 385);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1538, 325);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 15);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "label1";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(1538, 453);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.resbox.Location = new System.Drawing.Point(352, 282);
+            this.resbox.Name = "resbox";
+            this.resbox.Size = new System.Drawing.Size(313, 23);
+            this.resbox.TabIndex = 1;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1924, 745);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.cartesianChart1);
+            this.ClientSize = new System.Drawing.Size(1122, 627);
+            this.Controls.Add(this.resbox);
+            this.Controls.Add(this.nbox);
             this.Name = "Form1";
             this.Text = "Ну графики или че-то такое";
             this.ResumeLayout(false);
@@ -86,10 +63,8 @@ namespace NumericalMethods2
 
         #endregion
 
-        private LiveChartsCore.SkiaSharpView.WinForms.CartesianChart cartesianChart1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox nbox;
+        private System.Windows.Forms.TextBox resbox;
     }
 }
 
