@@ -2,40 +2,20 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.Defaults;
 
 
 namespace NumericalMethods2
 {
-    delegate decimal Foo(decimal x, decimal accuracy = 0.000001m);
+    delegate decimal Foo(decimal x);
     delegate decimal Method(decimal a, decimal b, Foo f);
     public partial class Form1 : Form
     {
-        private decimal a = 0.4m, b = 4, eps = 0.000001m;
-        private int n = 12;
+        private decimal a = 0.4m, b = 4;
+        private int N = 11;
         public Form1()
         {
             InitializeComponent();
             Process();
-        }
-        private void ParseVector(ObservablePoint[] v)
-        {
-            try
-            {
-                using(StreamWriter file = new StreamWriter("data.txt"))
-                {
-                    for (int i = 0; i < v.Length; i++)
-                    {
-                        file.WriteLine(v[i].X + "\t" + v[i].Y);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException(ex.Message);
-            }
         }
         private void ParseVector(List<List<decimal>> v)
         {
@@ -45,7 +25,13 @@ namespace NumericalMethods2
                 {
                     for (int i = 0; i < v.Count; i++)
                     {
-                        file.WriteLine(v[i][0] + "\t" + v[i][1]);
+                        string s = "";
+                        for (int j = 0; j < v[0].Count - 1; j++)
+                        {
+                            s += Math.Round(v[i][j], 10) + "\t";
+                        }
+                        s += Math.Round(v[i][v[i].Count - 1], 10);
+                        file.WriteLine(s);
                     }
                 }
             }
@@ -56,10 +42,18 @@ namespace NumericalMethods2
         }
         private void Process()
         {
-            //decimal[] r = EpsCalculate(a, b, Taylor, CentralRectangle, 11);
-            //nbox.Text = r[0].ToString();
-            //resbox.Text = r[1].ToString();
-            resbox.Text = GenCalculate(a, b, Taylor, Gauss, n).ToString();
+            List<List<decimal>> table = new List<List<decimal>>();
+            decimal h = (b - a) / (N - 1);
+            for (int i = 0; i < N; i++)
+            {
+                decimal x = a + i * h;
+                List<decimal> line = EpsCalculate(0, x, Integrant, Gauss);
+                line.Insert(0, x);
+                line.Insert(1, Taylor(x));
+                line.Insert(3, Math.Abs(Taylor(x) - line[2]));
+                table.Add(line);
+            }
+            ParseVector(table);
         }
         private decimal Taylor(decimal x, decimal accuracy = 0.000001m)
         {
@@ -73,22 +67,15 @@ namespace NumericalMethods2
             }
             return sum;
         }
-        private List<List<decimal>> Tabulate(decimal a, decimal b, int n, decimal accuracy = 0.000001m)
+        private decimal Integrant(decimal x)
         {
-            if (n < 2) throw new Exception();
-            decimal step = (b - a) / (n - 1);
-            List<List<decimal>> points = new List<List<decimal>>();
-            for (int i = 0; i < n; i++)
-            {
-                points.Add(new List<decimal>() { a + i * step, Taylor(a + i * step, accuracy) });
-            }
-            return points;
+            return x != 0 ?(decimal)(Math.Cos((double)x) - 1) / x : 0m;
         }
-        private decimal[] EpsCalculate(decimal a, decimal b, Foo f, Method m, decimal n = 3, decimal eps = 0.00000000001m)
+        private List<decimal> EpsCalculate(decimal a, decimal b, Foo f, Method m, decimal n = 2, decimal eps = 0.000001m)
         {
             decimal sum = GenCalculate(a, b, f, m, n);
             decimal dsum = GenCalculate(a, b, f, m, 2 * n);
-            if (Math.Abs(sum - dsum) <= eps) return new decimal[] { n, sum };
+            if (Math.Abs(sum - dsum) <= eps) return new List<decimal>() { sum, n };
 
             return EpsCalculate(a, b, f, m, 2 * n, eps);
         }
@@ -114,7 +101,7 @@ namespace NumericalMethods2
                 x2 = a + (b - a) / 2 * (1 + (decimal)Math.Sqrt(3) / 3);
             return (b - a) /2 * (f(x1) + f(x2));
         }
-        private decimal GenCalculate(decimal a, decimal b, Foo f, Method m, decimal n = 3)
+        private decimal GenCalculate(decimal a, decimal b, Foo f, Method m, decimal n = 2)
         {
             decimal h = (b - a) / (n - 1);
             decimal sum = 0;
